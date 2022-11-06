@@ -13,6 +13,7 @@ public class CameraFollowing : MonoBehaviour
     
     void Update()
     {
+        // move camera with same speed as player
         if(movePlayer.CanMove)
         transform.position += Vector3.forward * Time.deltaTime * player.GetComponent<MovePlayer>().Speed;
     }

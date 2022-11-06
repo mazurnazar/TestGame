@@ -13,15 +13,12 @@ public class RotatePlayer : MonoBehaviour
     MovePlayer movePlayer;
     private bool isRotating;
     public bool IsRotating { get => isRotating; private set { } }
-    // Start is called before the first frame update
     void Start()
     {
         movePlayer = GetComponent<MovePlayer>(); 
         startAngle = transform.rotation.y;
         currentAngle = 0;
     }
-
-    // Update is called once per frame
     void Update()
     {
         if(movePlayer.CanMove) Swipe();
@@ -39,18 +36,18 @@ public class RotatePlayer : MonoBehaviour
     {
         if (Input.touches.Length > 0)
         {
+
+            isRotating = true;
+           // movePlayer.StopParticles();
             Touch t = Input.GetTouch(0);
             if (t.phase == TouchPhase.Began)
             {
-               
                 //save began touch 2d point
                 firstTouchPos = new Vector2(t.position.x, t.position.y);
                 timeClick = Time.time;
-
             }
             if (t.phase == TouchPhase.Moved)
             {
-                isRotating = true;
                 ChangeSpeed(40);
                 //save ended touch 2d point
                 secondTouchPos = new Vector2(t.position.x, t.position.y);
@@ -63,6 +60,7 @@ public class RotatePlayer : MonoBehaviour
                     //normalize the 2d vector
                     currentSwipe.Normalize();
 
+                    // if moving finger vertically change speed of player moving
                     if (Mathf.Abs(currentSwipe.x) < 0.5f)
                     {
                         if (currentSwipe.y > 0) ChangeSpeed(movePlayer.MaxSpeed);
@@ -74,19 +72,21 @@ public class RotatePlayer : MonoBehaviour
                     }
                 }
             }
+            // when swipe is ended check if player is rotated enough for next position or not
             if(t.phase==TouchPhase.Ended)
             {
+                isRotating = false;
+                // if angle less than 45 degrees return to initial
                 if (Mathf.Abs(currentAngle) < 45)
                     transform.rotation = Quaternion.Euler(0, startAngle, 0);
-                else
+                else // else rotate to next position
                 {
                     float angleToRotate = (currentAngle < 0)?-90 : 90;
   
-                      transform.rotation = Quaternion.Euler(0, startAngle + angleToRotate , 0);
+                    transform.rotation = Quaternion.Euler(0, startAngle + angleToRotate , 0);
                     startAngle += angleToRotate;
                     currentAngle = 0;
                 }
-                
             }
         }
     }

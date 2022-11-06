@@ -12,15 +12,15 @@ public class DetectCollision : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
+        // if collides with enemy block move it and continue movement of player
         if (collision.gameObject.tag == "Enemy")
         {
-           // Debug.Log(collision.gameObject.name);
             collision.gameObject.transform.parent.GetComponent<ObstacleController>().Points -= 10;
             movePlayer.Speed = -5;
-            StartCoroutine(DestroyObject(collision.gameObject));
+            StartCoroutine(MoveBlock(collision.gameObject));
         }
     }
-    IEnumerator DestroyObject(GameObject collision)
+    IEnumerator MoveBlock(GameObject collision)
     {
         collision.tag = "Untagged";
         yield return new WaitForSeconds(0.1f);

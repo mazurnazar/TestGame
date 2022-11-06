@@ -9,13 +9,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] Image victoryImage;
     [SerializeField] Text scoreText;
     [SerializeField] Button nextLevel;
-
     [SerializeField] private int score;
     private int pointsToAdd;
-    public int PointsToAdd { get => pointsToAdd; set { pointsToAdd = value; } }
+    [SerializeField] ParticleSystem particleSystem;
     public int Score { get => score; set { score = value; } }
-    private bool showParticles;
-    public bool ShowParticles { get => showParticles; set { showParticles = value; } }
+    public int PointsToAdd { get => pointsToAdd; set { pointsToAdd = value; } }
+
+    // activate all win panels
     public IEnumerator Win()
     {
         victoryImage.gameObject.SetActive(true);
@@ -25,10 +25,12 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         nextLevel.gameObject.SetActive(true);
     }
+    //show score
     void ShowScore()
     {
         scoreText.text = "SCORE: \n" + score;
     }
+    // go to next level, in this case just reload this scene
     public void NextLevel()
     {
         SceneManager.LoadScene(0);

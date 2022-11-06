@@ -11,38 +11,42 @@ public class MovePlayer : MonoBehaviour
     private bool canMove;
     public bool CanMove { get => canMove; set { canMove = value; } }
 
+    private bool doubleSpeed;
+    public bool DoubleSpeed { get => doubleSpeed; private set { } }
 
     [SerializeField] ParticleSystem points;
     public ParticleSystem Points { get => points; private set { } }
     RotatePlayer rotatePlayer;
     [SerializeField] GameObject manager;
     GameManager gameManger;
-    public bool DoubleSpeed;
+    private bool canPlayParticles;
+    public bool CanPlayParticles { get => canPlayParticles; set { canPlayParticles = value; } }
+  
     // Start is called before the first frame update
     void Start()
     {
         gameManger = manager.GetComponent<GameManager>();
         rotatePlayer = GetComponent<RotatePlayer>();
         speed = 40;
+        maxSpeed = 80;
         canMove = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(canMove) MoveForward();
-        if (gameManger.ShowParticles)
-        {
-            PlayParticles();
-        }
-        if (speed == maxSpeed) DoubleSpeed = true; 
+        if (canMove) MoveForward();
+        if (speed == maxSpeed) doubleSpeed = true; 
     }
+    // move player with speed
     void MoveForward()
     {
         transform.position += Vector3.forward * Time.deltaTime * speed;
-        if (rotatePlayer.IsRotating)
-            StopParticles();
+        if (!rotatePlayer.IsRotating&&CanPlayParticles)
+            PlayParticles();
+        else StopParticles();
     }
+    // show particle system with points
     public void PlayParticles()
     {
         if (canMove)
@@ -57,13 +61,15 @@ public class MovePlayer : MonoBehaviour
     {
         points.Stop();
     }
+    
     private void OnTriggerEnter(Collider other)
     {
+        // if triggers with finish line
         if(other.tag=="Win")
         {
             canMove = false;
+            StopParticles();
             StartCoroutine( gameManger.Win());
-            
         }
     }
 }
